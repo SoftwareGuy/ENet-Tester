@@ -316,6 +316,7 @@ namespace ENetTester
                 }
 
                 client.Flush();
+                peer.DisconnectNow(0);
             }
 
             Console.WriteLine("ENet Client Worker: Departed");
