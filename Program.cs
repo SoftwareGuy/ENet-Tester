@@ -218,7 +218,13 @@ namespace ENetTester
                                 Packet spam = default(Packet);
                                 spam.Create(dummyDataArray, PacketFlags.Reliable);
 
-                                netEvent.Peer.Send(0, ref spam);
+                                int sendCode = netEvent.Peer.Send(0, ref spam);
+                                
+                                if (sendCode != 0)
+                                {
+                                    Console.WriteLine($"Send failure, ENet returned {sendCode}");
+                                }
+
                                 break;
                         }
                     }
@@ -233,6 +239,7 @@ namespace ENetTester
         private static void DoEnetClientWork()
         {            
             Console.WriteLine("ENet Client Worker: Arrived");
+            int sendCode = -1;
             byte[] dummyDataArray = System.Text.Encoding.UTF8.GetBytes(dummyData);
 
             using (Host client = new Host())
@@ -271,10 +278,15 @@ namespace ENetTester
                                 Console.WriteLine($"ENet Client Worker: Connected to server ({netEvent.Peer.IP}:{netEvent.Peer.Port})");
 
                                 // Immediately send a rick roll.
-                                Packet rickrolld = default(Packet);
-                                rickrolld.Create(dummyDataArray, PacketFlags.Reliable);
+                                Packet rickroll = default(Packet);
+                                rickroll.Create(dummyDataArray, PacketFlags.Reliable);
 
-                                peer.Send(0, ref rickrolld);
+                                sendCode = netEvent.Peer.Send(0, ref rickroll);
+
+                                if (sendCode != 0)
+                                {
+                                    Console.WriteLine($"Send failure, ENet returned {sendCode}");
+                                }
                                 break;
 
                             case EventType.Disconnect:
@@ -293,7 +305,11 @@ namespace ENetTester
                                 Packet spam = default(Packet);
                                 spam.Create(dummyDataArray, PacketFlags.Reliable);
 
-                                peer.Send(0, ref spam);
+                                sendCode = peer.Send(0, ref spam);
+                                if (sendCode != 0)
+                                {
+                                    Console.WriteLine($"Send failure, ENet returned {sendCode}");
+                                }
                                 break;
                         }
                     }
