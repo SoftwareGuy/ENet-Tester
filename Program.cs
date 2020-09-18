@@ -11,7 +11,7 @@ namespace ENetTester
         static int port = 7777;
         static int maxChannels = 1;
         static int maxClients = 50;
-        static bool killSwitch = false;
+        volatile static bool killSwitch = false;
         static string dummyData = "Never gonna give you up. Never gonna let you down. Never gonna run around and desert you";
 
         static void Main(string[] args)
@@ -109,9 +109,6 @@ namespace ENetTester
             Console.WriteLine();
             // ---
 
-            // Initialize ENet
-            Library.Initialize();
-
             if (isServer)
             {
                 Console.WriteLine("Starting Server Thread...");
@@ -167,6 +164,9 @@ namespace ENetTester
         // -- Threading stuff -- //
         private static void DoEnetServerWork()
         {
+            // Initialize ENet
+            Library.Initialize();
+
             Console.WriteLine("ENet Server Worker: Arrived");
             byte[] dummyDataArray = System.Text.Encoding.UTF8.GetBytes(dummyData);
 
@@ -234,10 +234,16 @@ namespace ENetTester
             }
 
             Console.WriteLine("ENet Server Worker: Departed");
+
+            // Initialize ENet
+            Library.Deinitialize();
         }
 
         private static void DoEnetClientWork()
-        {            
+        {
+            // Initialize ENet
+            Library.Initialize();
+
             Console.WriteLine("ENet Client Worker: Arrived");
             int sendCode = -1;
             byte[] dummyDataArray = System.Text.Encoding.UTF8.GetBytes(dummyData);
@@ -320,6 +326,9 @@ namespace ENetTester
             }
 
             Console.WriteLine("ENet Client Worker: Departed");
+
+            // Initialize ENet
+            Library.Deinitialize();
         }
     }
 }
